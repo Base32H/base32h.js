@@ -1,0 +1,26 @@
+{
+    "name": "@base32h/base32h",
+    "version": "1.0.0",
+    "description": "Base32H encoder/decoder",
+    "main": "base32h.js",
+    "scripts": {
+        "test": "tape spec.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/base32h/base32h.js.git"
+    },
+    "keywords": [
+        "base32h",
+        "base32"
+    ],
+    "author": "Ryan S. Northrup (\"RyNo\")",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/base32h/base32h.js/issues"
+    },
+    "homepage": "https://base32h.github.io",
+    "dependencies": {
+        "tape": "^5.0.1"
+    }
+}
