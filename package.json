@@ -1,6 +1,6 @@
 {
     "name": "@base32h/base32h",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Base32H encoder/decoder",
     "main": "base32h.js",
     "scripts": {
@@ -20,7 +20,7 @@
         "url": "https://github.com/base32h/base32h.js/issues"
     },
     "homepage": "https://base32h.github.io",
-    "dependencies": {
+    "devDependencies": {
         "tape": "^5.0.1"
     }
 }
