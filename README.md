@@ -8,7 +8,7 @@ should work in any reasonably-modern Javascript implementation).
 
 ## How do I install it?
 
-Run `npm install base32h@base32h` in your project directory, or just yank
+Run `npm install @base32h/base32h` in your project directory, or just yank
 `base32h.js` right out of this repo and stick it wherever.
 
 ## How do I use it?
