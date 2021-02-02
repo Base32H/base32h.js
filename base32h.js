@@ -76,12 +76,12 @@
         if (!rem) {
             return '0';
         }
-        var out = [];
+        var out = '';
         while (rem) {
-            out.unshift(encodeDigit(rem % 32));
-            rem = parseInt(rem / 32);
+            out = encodeDigit(rem % 32) + out;
+            rem = Math.floor(rem / 32)
         }
-        return out.join('');
+        return out;
     }
 
     /**
@@ -99,11 +99,11 @@
      */
     function encodeBin(input) {
         if (typeof input == 'string') {
-            input = [...input].map(i => i.charCodeAt(0));
+            input = Array.prototype.map.call(input, i => i.charCodeAt(0));
         }
         var overflow = input.length % 5;
         if (overflow) {
-            input = [...Array(5 - overflow).fill(0), ...input];
+            input = new Array(5 - overflow).fill(0).concat(input);
         }
         var acc = ''
         for (var i = 0; i < input.length; i += 5) {
@@ -120,16 +120,20 @@
         return b[0]*2**32 + b[1]*2**24 + b[2]*2**16 + b[3]*2**8 + b[4];
     }
 
-    // This is cursed
-    function pad(i,w,z) {
-        z = z || '0';
-        w = w || 8;
-        i += '';
-        var o = i.length % w;
-        if (o) {
-            return [...Array(w - o).fill(z), ...i].join('');
+    /**
+     * Pad a string to a given alignment.
+     * @param {string} value - The string to pad.
+     * @param {number} alignment - The alignment size.
+     * @param {string} char - The character to pad with.
+     * @returns {string} - The padded string.
+     */
+    function pad(value, alignment = 8, char = '0') {
+        value = typeof value === 'string' ? value : ''+value;
+        const pad = value.length % alignment;
+        if (pad) {
+            value = char.repeat(alignment - pad) + value;
         }
-        return i;
+        return value;
     }
 
     /**
@@ -153,12 +157,13 @@
      * @return {number} - Decoded representation of input.
      */
     function decode(input) {
-        input += '';
+        input = typeof input === 'string' ? input : ''+input;
         var acc = 0;
-        var rem = input.split('');
         var exp = 0;
-        while (rem.length > 0) {
-            var digit = decodeDigit(rem.pop());
+        var idx = input.length-1;
+        while (idx >= 0) {
+            var digit = decodeDigit(input[idx]);
+            idx -= 1;
             if (digit < 0) {
                 continue;
             }
@@ -183,25 +188,29 @@
      *
      * @return {number[]} - Decoded array of bytes.
      */
+    var re_notInAlphabet = /[^0Oo1Ii2345Ss6789AaBbCcDdEeFfGgHhJjKkLlMmNnPpQqRrTtVvUuWwXxYyZz]/g;
     function decodeBin(input) {
-        input = pad(input.split('').filter(d => decodeDigit(d) > -1).join(''));
+        input = pad(input.replace(re_notInAlphabet, ''));
         var acc = [];
         for (var i = 0; i < input.length; i += 8) {
             var segment = input.slice(i, i+8);
             var val = decode(segment);
-            acc = [...acc, ...uint40ToBytes(val)];
+            acc.push(uint40ToBytes(val));
         }
-        return acc;
+        return Array.prototype.concat.apply([], acc);
     }
 
-    function uint40ToBytes(i) {
-        var s = pad(parseInt(i).toString(16), 10);
-        var a = parseInt(s.slice(0,2), 16);
-        var b = parseInt(s.slice(2,4), 16);
-        var c = parseInt(s.slice(4,6), 16);
-        var d = parseInt(s.slice(6,8), 16);
-        var e = parseInt(s.slice(8,10), 16);
-        return [a,b,c,d,e];
+    function uint40ToBytes(value) {
+        var bytes = [0, 0, 0, 0, 0];
+        for (var idx = bytes.length-1; idx >= 0; idx--) {
+            var byte = value & 0xff;
+            bytes[idx] = byte;
+            value = (value - byte) / 256 ;
+            if(value === 0) {
+                break;
+            }
+        }
+        return bytes;
     }
 
     return {
