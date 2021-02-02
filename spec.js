@@ -126,3 +126,30 @@ test('Base32H Binary: Decode', function (t) {
     testBinDecode(t, 'zZzZzZzZzZzZzZzZ', [...uint40, ...uint40]);
     t.end();
 });
+
+test('Base32H Digit: Encode Digit', function (t) {
+    t.equal(base32h.encodeDigit(0), '0', "Encode 0 to '0'");
+    t.equal(base32h.encodeDigit(10), 'A', "Encode 10 to 'A'");
+    t.equal(base32h.encodeDigit(31), 'Z', "Encode 31 to 'Z'");
+    t.throws(
+        () => { base32h.encodeDigit(-1) },
+        /Cannot read property '0' of undefined/,
+        "Encode -1 should throw"
+    );
+    t.throws(
+        () => { base32h.encodeDigit(32) },
+        /Cannot read property '0' of undefined/,
+        "Encode 32 should throw"
+    );
+    t.end();
+});
+
+test('Base32H Digit: Decode Digit', function (t) {
+    t.equal(base32h.decodeDigit('0'), 0, "Decode '0' to 0");
+    t.equal(base32h.decodeDigit('A'), 10, "Decode 'A' to 10");
+    t.equal(base32h.decodeDigit('Z'), 31, "Decode 'Z' to 31");
+    t.equal(base32h.decodeDigit('!'), -1, "Decode '!' to -1");
+    // This isn't a problem, just document here in test.
+    t.equal(base32h.decodeDigit(''), 0, "Decode '' to 0");
+    t.end();
+});
