@@ -127,7 +127,9 @@
      * @param {string} char - The character to pad with.
      * @returns {string} - The padded string.
      */
-    function pad(value, alignment = 8, char = '0') {
+    function pad(value, alignment, char) {
+        alignment = alignment || 8;
+        char = char || '0';
         value = typeof value === 'string' ? value : ''+value;
         const pad = value.length % alignment;
         if (pad) {
